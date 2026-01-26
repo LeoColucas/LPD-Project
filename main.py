@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
 LPD Security Tool - CLI Skeleton
-- Main menu loop
 - Input validation
 - Handlers for each feature
 """
 
 from __future__ import annotations
 
-from core.csv_utils import write_open_ports_csv
+from core.csv_utils import write_open_ports_csv, write_log_events_csv
 from modules.udp_flood import UdpFloodConfig, udp_flood_simulation
+from core.geoip_utils import GeoIpResolver
 from modules.syn_flood import SynFloodConfig, syn_flood_simulation
+from pathlib import Path
 
 from modules.port_scanner import (
     expand_targets,
@@ -19,6 +20,13 @@ from modules.port_scanner import (
     tcp_scan_simple,
     tcp_scan_threaded,
 )
+from modules.log_analysis import (
+    parse_auth_log_ssh,
+    parse_ufw_log,
+    summarize,
+)
+from core.geoip_utils import GeoIpResolver
+from core.csv_utils import write_log_events_csv
 
 import sys
 from dataclasses import dataclass
@@ -229,16 +237,204 @@ def handle_udp_flood() -> None:
 
 def handle_log_analysis() -> None:
     clear_screen()
-    print("== Log Analysis ==")
-    print("TODO: implementar análise de logs (ssh + http), geoip, CSV/PDF")
+    print("== Análise de Logs (auth.log + ufw.log) ==")
+    print("Extrai: IP origem, país, timestamps e detalhes (SSH + UFW).\n")
+
+    auth_path = input("Caminho auth.log [/var/log/auth.log]: ").strip() or "/var/log/auth.log"
+    ufw_path = input("Caminho syslog (UFW + remotos) [/var/log/syslog]: ").strip() or "/var/log/syslog"
+    mmdb_path = Path("data/GeoLite2-Country.mmdb")
+    if mmdb_path.exists():
+        mmdb = str(mmdb_path)
+        print(f"[i] GeoIP ativo: {mmdb}")
+    else:
+        mmdb = None
+        print("[!] GeoIP não encontrado (data/GeoLite2-Country.mmdb). País será omitido.")
+
+    save = (input("Guardar eventos em CSV? [s/N]: ").strip().lower() or "n") == "s"
+
+    started_at = datetime.now()
+    geo = GeoIpResolver(mmdb)
+
+    try:
+        events = []
+        events += parse_auth_log_ssh(auth_path, geo)
+        events += parse_ufw_log(ufw_path, geo)
+    finally:
+        geo.close()
+
+    finished_at = datetime.now()
+
+    if not events:
+        print("\nSem eventos (ou ficheiros não encontrados / sem permissões).")
+        print("Dica: para ler /var/log/* pode ser preciso: sudo -E .venv/bin/python main.py")
+        pause()
+        return
+
+    events.sort(key=lambda e: e.timestamp)
+    s = summarize(events)
+
+    print(f"\nTotal de eventos: {s.total_events}")
+
+    print("\nTop países (ISO):")
+    for c, n in s.by_country:
+        print(f" - {c}: {n}")
+
+    print("\nTop IPs origem:")
+    for ip, n in s.by_ip:
+        print(f" - {ip}: {n}")
+
+    print("\nPrimeiros 25 eventos:")
+    for e in events[:25]:
+        country = e.country_iso or "??"
+        print(f"[{e.timestamp}] {e.service} {e.action} ip={e.ip} country={country} {e.detail}")
+
+    if save:
+        fname = f"logs_{started_at.strftime('%Y%m%d_%H%M%S')}.csv"
+        out_path = f"reports/{fname}"
+        try:
+            p = write_log_events_csv(out_path, started_at, finished_at, events)
+            print(f"\n[+] CSV guardado em: {p}")
+        except OSError as ex:
+            print(f"\n[!] Erro a escrever CSV: {ex}")
+
     pause()
-
-
 def handle_secure_messaging() -> None:
+    from messaging import MessagingServer, MessagingClient
+
     clear_screen()
     print("== Secure Messaging ==")
-    print("TODO: implementar cliente/servidor + encriptação")
-    pause()
+    print("1) Iniciar servidor")
+    print("2) Iniciar cliente")
+    print("0) Voltar")
+    choice = input("> ").strip()
+
+    if choice == "1":
+        host = input("Host [127.0.0.1]: ").strip() or "127.0.0.1"
+        port_str = input("Porta [5000]: ").strip() or "5000"
+        data_dir = input("Diretório dados servidor [server_data]: ").strip() or "server_data"
+        try:
+            port = int(port_str)
+        except ValueError:
+            print("Porta inválida.")
+            pause()
+            return
+
+        server = MessagingServer(host=host, port=port, data_dir=data_dir)
+        server.start()
+        print(f"\nServidor a correr em {host}:{port}")
+        print("ENTER para parar o servidor...")
+        input()
+        server.stop()
+        print("Servidor parado.")
+        pause()
+        return
+
+    if choice == "2":
+        host = input("Host do servidor [127.0.0.1]: ").strip() or "127.0.0.1"
+        port_str = input("Porta do servidor [5000]: ").strip() or "5000"
+        user_id = input("O teu userId (ex: alice): ").strip()
+        key_dir = input("Diretório chaves cliente [client_keys]: ").strip() or "client_keys"
+        if not user_id:
+            print("userId é obrigatório.")
+            pause()
+            return
+        try:
+            port = int(port_str)
+        except ValueError:
+            print("Porta inválida.")
+            pause()
+            return
+
+        client = MessagingClient(user_id=user_id, host=host, port=port, key_dir=key_dir)
+
+        try:
+            client.connect()
+            # tenta registar automaticamente (idempotente)
+            client.register()
+        except Exception as e:
+            print(f"Falha a ligar/registar: {e}")
+            pause()
+            return
+
+        while True:
+            clear_screen()
+            print(f"== Secure Messaging (cliente: {user_id}) ==")
+            print("1) Enviar mensagem")
+            print("2) Listar mensagens (em que sou interveniente)")
+            print("3) Download mensagens (por msgId)")
+            print("4) Apagar mensagens (por msgId)")
+            print("5) Export/Backup (encriptado para mim)")
+            print("6) Ver/desencriptar ficheiro de mensagem (local)")
+            print("7) Ver/desencriptar backup exportado (local)")
+            print("0) Sair")
+            op = input("> ").strip()
+
+            try:
+                if op == "1":
+                    to = input("Para (userId): ").strip()
+                    body = input("Mensagem: ").strip()
+                    res = client.send_message(to=to, body=body)
+                    print(f"OK. msgId={res.get('msgId')}")
+                    pause()
+
+                elif op == "2":
+                    with_user = input("Filtrar por userId (enter=sem filtro): ").strip() or None
+                    msgs = client.list_messages(with_user=with_user)
+                    print("\nMensagens:")
+                    for m in msgs:
+                        print(f"- {m['msgId']} | {m['timestamp']} | {m['from']} -> {m['to']} | {m['size']} bytes")
+                    pause()
+
+                elif op == "3":
+                    ids = input("msgIds separados por vírgula: ").strip()
+                    msg_ids = [x.strip() for x in ids.split(",") if x.strip()]
+                    out_dir = input("Guardar em diretório [downloads]: ").strip() or "downloads"
+                    saved = client.download_messages(msg_ids=msg_ids, out_dir=out_dir)
+                    print("\nGuardados:")
+                    for p in saved:
+                        print(f"- {p}")
+                    pause()
+
+                elif op == "4":
+                    ids = input("msgIds separados por vírgula: ").strip()
+                    msg_ids = [x.strip() for x in ids.split(",") if x.strip()]
+                    client.delete_messages(msg_ids=msg_ids)
+                    print("OK. Removido(s).")
+                    pause()
+
+                elif op == "5":
+                    out_file = input("Ficheiro backup [backup.enc]: ").strip() or "backup.enc"
+                    client.export_messages(out_file=out_file)
+                    print(f"OK. Backup guardado em: {out_file}")
+                    pause()
+
+                elif op == "6":
+                    path = input("Caminho do ficheiro msg_*.json: ").strip()
+                    plain = client.decrypt_archived_message_file(path)
+                    print("\n--- Mensagem desencriptada ---")
+                    print(plain)
+                    print("------------------------------")
+                    pause()
+
+                elif op == "7":
+                    path = input("Caminho do backup *.enc: ").strip()
+                    plain = client.decrypt_backup_file(path)
+                    print("\n--- Backup desencriptado (texto) ---")
+                    print(plain[:5000] + ("\n...(truncado)" if len(plain) > 5000 else ""))
+                    print("------------------------------------")
+                    pause()
+
+                elif op == "0":
+                    client.close()
+                    return
+
+            except Exception as e:
+                print(f"Erro: {e}")
+                pause()
+        return
+
+    # voltar
+    return
 
 
 def handle_port_knocking() -> None:

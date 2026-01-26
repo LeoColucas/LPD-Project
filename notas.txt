@@ -1,0 +1,34 @@
+As dependências Python do projeto foram geridas através de um ambiente virtual (venv), garantindo o isolamento do ambiente de desenvolvimento e evitando conflitos com o sistema operativo, em conformidade com as boas práticas recomendadas.
+
+leonardocolucas@desktop:~/Documentos/Mestrado/LPD/Projeto$ source .venv/bin/activate
+(.venv) leonardocolucas@desktop:~/Documentos/Mestrado/LPD/Projeto$ sudo -E .venv/bin/python main.py
+ 
+Sempre que fores trabalhar no projeto:
+
+cd Projeto
+source .venv/bin/activate
+python main.py
+
+
+Ou, se precisares de sudo (logs, scapy, etc.):
+
+sudo -E .venv/bin/python main.py
+
+
+(-E preserva o ambiente virtual)
+
+
+
+Para a identificação do país de origem dos acessos foi utilizada a base de dados GeoLite2 Country da MaxMind, em formato binário (.mmdb), acedida através da biblioteca geoip2.
+
+No âmbito da análise e processamento de logs, o projeto foi além da leitura local de ficheiros e implementou uma arquitetura de logging centralizado, utilizando:
+
+rsyslog como servidor de logs
+
+uma máquina virtual Kali Linux como cliente
+
+rede Host-only para comunicação estável
+
+análise automática dos logs centralizados via Python
+
+Isto corresponde exatamente à opção “valorizada” do enunciado.
