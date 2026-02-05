@@ -5,3 +5,24 @@ rsa_file
 reports/
 .env
 *.pdf
+# virtualenv
+.venv/
+
+# python cache
+__pycache__/
+*.pyc
+
+# runtime data
+server_data/
+server data/
+client_keys/
+client keys/
+downloads/
+backup*.enc
+
+# reports / outputs
+reports/
+
+# editor / OS junk
+*.log
+.DS_Store

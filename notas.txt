@@ -32,3 +32,145 @@ rede Host-only para comunicação estável
 análise automática dos logs centralizados via Python
 
 Isto corresponde exatamente à opção “valorizada” do enunciado.
+
+
+
+1. Enquadramento e Objetivo
+
+O serviço de troca de mensagens seguras foi desenvolvido com o objetivo de permitir a comunicação confidencial entre múltiplos utilizadores através de um modelo cliente–servidor. O sistema garante que todas as mensagens trocadas são protegidas criptograficamente, armazenadas apenas no servidor em formato encriptado e apenas podem ser visualizadas pelos intervenientes legítimos mediante a utilização das respetivas chaves privadas.
+
+O serviço suporta comunicação entre múltiplos clientes, arquivamento seguro das mensagens, listagem, remoção, download e exportação/backup das mensagens, cumprindo integralmente os requisitos definidos no enunciado do projeto.
+
+2. Arquitetura Geral
+
+A solução adota uma arquitetura cliente–servidor distribuída, testada em múltiplas máquinas virtuais (VMs):
+
+Servidor: responsável por receber mensagens, encriptá-las, armazená-las de forma persistente e responder a pedidos de listagem, download, remoção e exportação.
+
+Clientes: responsáveis pela geração e gestão de chaves criptográficas, envio e receção de mensagens, bem como pela desencriptação local das mensagens e backups.
+
+O servidor não possui qualquer chave privada, operando apenas com chaves públicas dos utilizadores, o que reduz significativamente a superfície de ataque e reforça o princípio de minimização de privilégios.
+
+3. Gestão de Chaves Criptográficas
+
+Cada utilizador possui um par de chaves assimétricas RSA (2048 bits):
+
+Chave privada: armazenada localmente no cliente e nunca transmitida pela rede.
+
+Chave pública: enviada ao servidor durante o processo de registo.
+
+O registo de utilizadores é idempotente e permite ao servidor manter um repositório de chaves públicas para os diversos intervenientes no sistema.
+
+4. Mecanismo de Encriptação (Criptografia Híbrida)
+
+Para garantir confidencialidade, integridade e eficiência, foi adotada uma abordagem de criptografia híbrida, composta por duas camadas:
+
+4.1 Encriptação da Mensagem
+
+A mensagem em texto claro é encriptada utilizando AES-256-GCM, garantindo:
+
+Confidencialidade dos dados
+
+Integridade e autenticação do conteúdo
+
+É utilizado um vetor de inicialização (nonce) aleatório e dados autenticados adicionais (AAD) que ligam criptograficamente a mensagem aos seus metadados (timestamp, remetente e destinatário).
+
+4.2 Proteção da Chave Simétrica
+
+A chave AES gerada para cada mensagem é encriptada com RSA-OAEP (SHA-256) para cada interveniente da comunicação (remetente e destinatário). Desta forma:
+
+Cada utilizador pode desencriptar a mensagem com a sua própria chave privada.
+
+O servidor não consegue aceder ao conteúdo da mensagem.
+
+5. Arquivamento Seguro no Servidor
+
+As mensagens são armazenadas exclusivamente no servidor, em ficheiros de texto estruturados (JSON) contendo:
+
+Metadados da mensagem
+
+Texto cifrado (ciphertext)
+
+Chaves simétricas encriptadas para cada interveniente
+
+O conteúdo armazenado encontra-se sempre encriptado, não existindo qualquer armazenamento de mensagens em texto claro no servidor.
+
+6. Funcionalidades do Cliente
+
+O cliente disponibiliza as seguintes funcionalidades:
+
+Envio de mensagens para outros utilizadores registados
+
+Listagem de mensagens em que o utilizador é interveniente
+
+Download de mensagens arquivadas no servidor
+
+Desencriptação local de mensagens utilizando a chave privada
+
+Remoção de mensagens no servidor (limitada às mensagens em que é interveniente)
+
+Exportação/backup das mensagens em que participa
+
+Todas as operações de desencriptação são efetuadas exclusivamente no lado do cliente.
+
+7. Exportação e Backup de Mensagens
+
+O sistema suporta a exportação de todas as mensagens associadas a um utilizador para um ficheiro de backup encriptado.
+
+7.1 Encriptação do Backup
+
+O ficheiro de backup é protegido através de criptografia híbrida:
+
+O conteúdo do backup é encriptado com AES-256-GCM
+
+A chave simétrica é encriptada com a chave pública do utilizador
+
+7.2 Estrutura do Backup
+
+Após a desencriptação do backup, o utilizador obtém um ficheiro estruturado contendo:
+
+Metadados do backup (timestamp, utilizador, número de mensagens)
+
+As mensagens tal como se encontram armazenadas no servidor, ou seja, ainda encriptadas
+
+Este desenho garante uma abordagem de defesa em profundidade, na qual a desencriptação do backup não 
+compromete a confidencialidade das mensagens individuais.
+
+8. Visualização das Mensagens
+
+Para visualizar o conteúdo de uma mensagem exportada ou arquivada, é necessário:
+
+Possuir o ficheiro da mensagem
+
+Utilizar a funcionalidade de desencriptação local
+
+Disponibilizar a chave privada correspondente ao utilizador interveniente
+
+Sem a chave privada correta, a mensagem permanece inacessível.
+
+9. Testes e Validação
+
+O sistema foi testado num ambiente distribuído com três máquinas virtuais:
+
+Uma VM a executar o servidor
+
+Duas VMs a executar clientes distintos
+
+Os testes comprovaram:
+
+Comunicação segura em rede real
+
+Isolamento das chaves privadas por máquina
+
+Arquivamento exclusivamente encriptado no servidor
+
+Impossibilidade de acesso às mensagens por utilizadores não autorizados
+
+Correto funcionamento do mecanismo de backup e desencriptação
+
+10. Conclusão
+
+O serviço de troca de mensagens seguras cumpre integralmente os requisitos definidos no enunciado, 
+implementando boas práticas de segurança, criptografia moderna e uma arquitetura robusta e escalável. 
+A utilização de criptografia híbrida, aliada à separação clara de responsabilidades entre cliente e servidor, 
+garante confidencialidade, integridade e controlo de acesso às mensagens, mesmo em cenários de backup e exportação.

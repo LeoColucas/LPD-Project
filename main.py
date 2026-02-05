@@ -28,6 +28,8 @@ from modules.log_analysis import (
 from core.geoip_utils import GeoIpResolver
 from core.csv_utils import write_log_events_csv
 
+from modules.messaging import MessagingServer, MessagingClient
+
 import sys
 from dataclasses import dataclass
 from typing import Callable, Dict, Optional
@@ -298,8 +300,9 @@ def handle_log_analysis() -> None:
             print(f"\n[!] Erro a escrever CSV: {ex}")
 
     pause()
+
 def handle_secure_messaging() -> None:
-    from messaging import MessagingServer, MessagingClient
+    
 
     clear_screen()
     print("== Secure Messaging ==")
