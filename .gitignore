@@ -5,6 +5,7 @@ rsa_file
 reports/
 .env
 *.pdf
+HEAD
 # virtualenv
 .venv/
 
@@ -26,3 +27,20 @@ reports/
 # editor / OS junk
 *.log
 .DS_Store
+
+# Python venv
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# logs/output
+*.log
+data/output/
+c0fbbb6 (clean tracked environment files)
