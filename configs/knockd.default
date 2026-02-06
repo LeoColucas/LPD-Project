@@ -1,0 +1,3 @@
+# /etc/default/knockd
+START_KNOCKD=1
+KNOCKD_OPTS="-i eth2"

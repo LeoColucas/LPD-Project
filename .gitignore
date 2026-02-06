@@ -43,4 +43,18 @@ __pycache__/
 # logs/output
 *.log
 data/output/
+Updated upstream
 c0fbbb6 (clean tracked environment files)
+
+
+
+client keys/
+downloads/
+server data/
+server_data/
+
+.idea/
+.vscode/
+*.swp
+.DS_Store
+ Stashed changes
