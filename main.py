@@ -25,6 +25,9 @@ from modules.log_analysis import (
     parse_ufw_log,
     summarize,
 )
+from modules.port_knocking import knock_then_test_ssh
+
+
 from core.geoip_utils import GeoIpResolver
 from core.csv_utils import write_log_events_csv
 
@@ -439,11 +442,57 @@ def handle_secure_messaging() -> None:
     # voltar
     return
 
+def _parse_ports(s: str) -> list[int]:
+    raw = s.replace(",", " ").split()
+    ports: list[int] = []
+    for x in raw:
+        p = int(x)
+        if not (1 <= p <= 65535):
+            raise ValueError(f"Porta inválida: {p}")
+        ports.append(p)
+    if not ports:
+        raise ValueError("Sequência vazia.")
+    return ports
 
 def handle_port_knocking() -> None:
     clear_screen()
     print("== Port Knocking ==")
-    print("TODO: implementar sequência de knocks + testes SSH")
+
+    # defaults para o teu lab
+    default_host = "192.168.56.102"
+    default_seq = "7000,8000,9000"
+
+    host = input(f"Servidor (default {default_host}): ").strip() or default_host
+    seq_str = input(f"Sequência (default {default_seq}): ").strip() or default_seq
+
+    try:
+        ports = _parse_ports(seq_str)
+    except ValueError as e:
+        print(f"Erro: {e}")
+        pause()
+        return
+
+    report = knock_then_test_ssh(
+        host=host,
+        knock_ports=ports,
+        ssh_port=22,
+        delay_s=0.3,
+        timeout_s=1.0,
+        wait_after_s=0.5,
+    )
+
+    print("\n--- Resultado ---")
+    print(f"Host: {report.host}")
+    print(f"Sequência: {report.knock_ports}")
+    print(f"Knocks (connect ok por porta): {report.per_port_result}")
+    print(f"Teste SSH ({report.ssh_port}): {'ABERTO' if report.ssh_open else 'FECHADO'}")
+
+    if report.ssh_open:
+        print("✅ SSH acessível (temporariamente).")
+        print(f"Ex: ssh <user>@{report.host}")
+    else:
+        print("❌ SSH ainda fechado. Verifica knockd, iptables e interface.")
+
     pause()
 
 
