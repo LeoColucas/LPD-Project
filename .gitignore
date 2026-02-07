@@ -9,6 +9,8 @@ HEAD
 # virtualenv
 .venv/
 
+data/password_manager/
+
 # python cache
 __pycache__/
 *.pyc
