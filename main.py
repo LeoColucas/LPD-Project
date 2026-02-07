@@ -12,6 +12,8 @@ from modules.udp_flood import UdpFloodConfig, udp_flood_simulation
 from core.geoip_utils import GeoIpResolver
 from modules.syn_flood import SynFloodConfig, syn_flood_simulation
 from pathlib import Path
+from modules.password_manager import PasswordManager, PasswordManagerError
+
 
 from modules.port_scanner import (
     expand_targets,
@@ -26,6 +28,7 @@ from modules.log_analysis import (
     summarize,
 )
 from modules.port_knocking import knock_then_test_ssh
+
 
 
 from core.geoip_utils import GeoIpResolver
@@ -495,12 +498,125 @@ def handle_port_knocking() -> None:
 
     pause()
 
-
 def handle_password_manager() -> None:
     clear_screen()
     print("== Password Manager ==")
-    print("TODO: implementar CRUD + encriptação assimétrica + 2FA (pyotp)")
-    pause()
+
+    try:
+        pm = PasswordManager()
+    except Exception as e:
+        print(f"[!] Falha a inicializar PasswordManager: {e}")
+        pause()
+        return
+
+    while True:
+        clear_screen()
+        print("== Password Manager ==")
+        print("1) Criar registo")
+        print("2) Atualizar registo")
+        print("3) Apagar registo")
+        print("4) Consultar registo (2FA)")
+        print("5) Listar registos (sem passwords)")
+        print("8) Mostrar info 2FA (secret/uri)")
+        print("0) Voltar")
+        op = input("> ").strip()
+
+        try:
+            if op == "1":
+                url = input("URL: ").strip()
+                user = input("User: ").strip()
+                pwd = input("Password: ").strip()
+                if not url or not user or not pwd:
+                    print("[!] URL/User/Password são obrigatórios.")
+                    pause()
+                    continue
+                pm.create_record(url=url, user=user, password=pwd)
+                print("[+] Registo criado.")
+                pause()
+
+            elif op == "2":
+                url = input("URL a atualizar: ").strip()
+                if not url:
+                    print("[!] URL é obrigatório.")
+                    pause()
+                    continue
+                user = input("User (opcional p/ desambiguar): ").strip() or None
+                new_user = input("Novo user (Enter mantém): ").strip() or None
+                new_pwd = input("Nova password (Enter mantém): ").strip() or None
+                if not new_user and not new_pwd:
+                    print("[i] Nada para atualizar.")
+                    pause()
+                    continue
+                pm.update_record(url=url, user=user, new_user=new_user, new_password=new_pwd)
+                print("[+] Registo atualizado.")
+                pause()
+
+            elif op == "3":
+                url = input("URL a apagar: ").strip()
+                if not url:
+                    print("[!] URL é obrigatório.")
+                    pause()
+                    continue
+                user = input("User (opcional p/ desambiguar): ").strip() or None
+                c = input("Confirmar apagar? (s/N): ").strip().lower() or "n"
+                if c != "s":
+                    print("[i] Cancelado.")
+                    pause()
+                    continue
+                pm.delete_record(url=url, user=user)
+                print("[+] Registo apagado.")
+                pause()
+
+            elif op == "4":
+                url = input("URL a consultar: ").strip()
+                if not url:
+                    print("[!] URL é obrigatório.")
+                    pause()
+                    continue
+                user = input("User (opcional p/ desambiguar): ").strip() or None
+                code = input("Código 2FA (6 dígitos): ").strip()
+                res = pm.consult_password(url=url, user=user, totp_code=code)
+
+                print("\n--- Resultado ---")
+                print(f"URL:  {res['url']}")
+                print(f"User: {res['user']}")
+                print(f"Pass: {res['pass']}")
+                pause()
+
+            elif op == "5":
+                recs = pm.list_records()
+                if not recs:
+                    print("Sem registos.")
+                    pause()
+                    continue
+                print("\n== Registos ==")
+                for r in recs:
+                    print(f"- URL: {r['url']} | user: {r['user']}")
+                pause()
+
+            elif op == "8":
+                info = pm.get_totp_setup_info()
+                print("\n=== 2FA info ===")
+                print("SECRET (coloca no Authenticator):")
+                print(info["secret"])
+                print("\nURI (se a app aceitar):")
+                print(info["uri"])
+                pause()
+
+            elif op == "0":
+                return
+
+            else:
+                print("[!] Opção inválida.")
+                pause()
+
+        except PasswordManagerError as e:
+            print(f"[!] {e}")
+            pause()
+        except Exception as e:
+            print(f"[!] Erro inesperado: {e}")
+            pause()
+
 
 
 def handle_about() -> None:
