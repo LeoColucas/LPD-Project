@@ -4,13 +4,14 @@ import base64
 import json
 import os
 import stat
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 import pyotp
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
@@ -22,7 +23,14 @@ class PasswordManager:
     """
     Serviço: CRUD + encriptação assimétrica (RSA) + 2FA (TOTP).
     Sem input()/print(): a UI fica na main.py.
+
+    Extra: proteção contra brute-force do 2FA:
+    - após MAX_2FA_ATTEMPTS falhadas, bloqueia LOCKOUT_SECONDS segundos
+    - estado persistido em lockout.json
     """
+
+    MAX_2FA_ATTEMPTS = 3
+    LOCKOUT_SECONDS = 60
 
     def __init__(self, base_dir: Optional[Path] = None) -> None:
         # base_dir = root do projeto
@@ -32,6 +40,7 @@ class PasswordManager:
         self.priv_path = self.app_dir / "rsa_private.pem"
         self.pub_path = self.app_dir / "rsa_public.pem"
         self.totp_path = self.app_dir / "totp_secret.txt"
+        self.lockout_path = self.app_dir / "lockout.json"
 
         self.app_dir.mkdir(parents=True, exist_ok=True)
         self._private_key, self._public_key = self._ensure_rsa_keys()
@@ -41,7 +50,6 @@ class PasswordManager:
 
     def list_records(self) -> list[dict[str, str]]:
         db = self._load_db()
-        # devolve só metadata (sem password)
         return [{"url": r["url"], "user": r["user"], "id": r["id"]} for r in db.get("records", [])]
 
     def create_record(self, url: str, user: str, password: str) -> None:
@@ -80,9 +88,16 @@ class PasswordManager:
         self._save_db(db)
 
     def consult_password(self, url: str, user: Optional[str], totp_code: str) -> dict[str, str]:
-        # 2FA obrigatório
+        # 1) Verifica se está bloqueado por brute-force
+        self._check_lockout()
+
+        # 2) Verifica 2FA
         if not self._verify_totp(totp_code):
+            self._register_2fa_failure()
             raise PasswordManagerError("2FA inválido.")
+
+        # 3) Se 2FA correto, reset ao contador
+        self._reset_2fa_failures()
 
         db = self._load_db()
         idx = self._find_idx_any(db, url, user)
@@ -98,15 +113,52 @@ class PasswordManager:
         return {"url": rec["url"], "user": rec["user"], "pass": payload.get("pass", "")}
 
     def get_totp_setup_info(self) -> dict[str, str]:
-        """
-        Para a UI mostrar uma vez (ou sempre, se quiseres):
-        - secret
-        - provisioning uri (p/ apps que aceitem)
-        """
         issuer = "Projeto-LPD"
         account = "password-manager"
         uri = pyotp.TOTP(self._totp_secret).provisioning_uri(name=account, issuer_name=issuer)
         return {"secret": self._totp_secret, "uri": uri}
+
+    # ---------- internals: lockout 2FA ----------
+
+    def _load_lockout(self) -> dict[str, float]:
+        if not self.lockout_path.exists():
+            return {"failed": 0.0, "locked_until": 0.0}
+        try:
+            data = json.loads(self.lockout_path.read_text(encoding="utf-8"))
+            return {
+                "failed": float(data.get("failed", 0.0)),
+                "locked_until": float(data.get("locked_until", 0.0)),
+            }
+        except Exception:
+            return {"failed": 0.0, "locked_until": 0.0}
+
+    def _save_lockout(self, state: dict[str, float]) -> None:
+        self.lockout_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+        self._chmod_600(self.lockout_path)
+
+    def _check_lockout(self) -> None:
+        state = self._load_lockout()
+        now = time.time()
+        locked_until = state.get("locked_until", 0.0)
+        if now < locked_until:
+            remaining = int(locked_until - now)
+            raise PasswordManagerError(f"2FA bloqueado por {remaining}s (muitas tentativas falhadas).")
+
+    def _register_2fa_failure(self) -> None:
+        state = self._load_lockout()
+        failed = int(state.get("failed", 0.0)) + 1
+
+        if failed >= self.MAX_2FA_ATTEMPTS:
+            state["failed"] = 0.0
+            state["locked_until"] = time.time() + self.LOCKOUT_SECONDS
+        else:
+            state["failed"] = float(failed)
+            state["locked_until"] = float(state.get("locked_until", 0.0))
+
+        self._save_lockout(state)
+
+    def _reset_2fa_failures(self) -> None:
+        self._save_lockout({"failed": 0.0, "locked_until": 0.0})
 
     # ---------- internals: db ----------
 
