@@ -130,7 +130,14 @@ EOF
 # ===== Quick sanity check =====
 if [ -f "main.py" ]; then
   info "Teste rápido: importar main.py (não executa menu)..."
-  python -c "import importlib.util; spec=importlib.util.spec_from_file_location('main','main.py'); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); print('OK: main.py carregou')"
+  python - <<'PY'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("main", "main.py")
+m = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = m  # necessário para dataclasses em Python 3.13
+spec.loader.exec_module(m)
+print("OK: main.py carregou")
+PY
   ok "Sanity check ok."
 else
   warn "Não encontrei main.py na raiz. Ajusta o script ao teu layout."
