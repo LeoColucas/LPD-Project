@@ -61,3 +61,6 @@ server_data/
 .DS_Store
  Stashed changes
 notas.txt
+
+# Sphinx build output
+docs/build/
