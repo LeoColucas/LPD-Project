@@ -176,12 +176,15 @@ def _conv_key(a: str, b: str) -> str:
 
 class MessagingServer:
     """
-    Multi-client TCP server.
-    Stores:
-      - users.json : { userId: publicKeyPem }
-      - messages/<convKey>/msg_<id>.json : encrypted records
-      - index.jsonl : one line per message (metadata)
+    Servidor TCP multi-cliente para mensagens seguras.
+
+    Armazena:
+      - users.json: { userId: publicKeyPem }
+      - messages/<convKey>/msg_<id>.json: registos cifrados
+      - index.jsonl: uma linha por mensagem (metadados)
     """
+
+
     def __init__(self, host: str, port: int, data_dir: str = "server_data") -> None:
         self.host = host
         self.port = port

@@ -345,8 +345,8 @@ def handle_log_analysis() -> None:
     print("== Análise de Logs (auth.log + ufw.log) ==")
     print("Extrai: IP origem, país, timestamps e detalhes (SSH + UFW).\n")
 
-    auth_path = input("Caminho auth.log [/var/log/auth.log]: ").strip() or "/var/log/auth.log"
-    ufw_path = input("Caminho syslog (UFW + remotos) [/var/log/syslog]: ").strip() or "/var/log/syslog"
+    auth_path = input("Caminho auth.log [data/auth.log]: ").strip() or "data/auth.log"
+    ufw_path = input("Caminho syslog (UFW + remotos) [data/ufw.log]: ").strip() or "data/ufw.log"
     mmdb_path = Path("data/GeoLite2-Country.mmdb")
     if mmdb_path.exists():
         mmdb = str(mmdb_path)

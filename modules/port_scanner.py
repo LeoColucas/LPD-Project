@@ -43,12 +43,16 @@ def _scan_one_tcp(resolved_host: str, port: int, timeout: float) -> Tuple[int, b
             pass
 def expand_targets(spec: str) -> List[str]:
     """
+    Expande alvos fornecidos para uma lista de targets a scanear.
+
     Aceita:
       - "192.168.1.10"
       - "pc1.local,192.168.1.20"
       - "192.168.1.0/24"
       - "192.168.1.10-192.168.1.30"
-    Devolve lista de targets (strings) para scanear.
+
+    Devolve:
+      Lista de targets (strings) prontos para scanear.
     """
     spec = spec.strip()
     if not spec:
