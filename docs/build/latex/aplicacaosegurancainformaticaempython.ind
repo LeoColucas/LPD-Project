@@ -1,0 +1,217 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter A
+  \item \spxentry{action}\spxextra{main.MenuOption attribute}, \hyperpage{5}
+  \item \spxentry{action}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{7}
+  \item \spxentry{add\_findings()}\spxextra{in module main}, \hyperpage{5}
+
+  \indexspace
+  \bigletter B
+  \item \spxentry{by\_country}\spxextra{modules.log\_analysis.Summary attribute}, \hyperpage{8}
+  \item \spxentry{by\_ip}\spxextra{modules.log\_analysis.Summary attribute}, \hyperpage{8}
+
+  \indexspace
+  \bigletter C
+  \item \spxentry{clear\_screen()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{close()}\spxextra{modules.messaging.MessagingClient method}, \hyperpage{9}
+  \item \spxentry{connect()}\spxextra{modules.messaging.MessagingClient method}, \hyperpage{9}
+  \item \spxentry{consult\_password()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+  \item \spxentry{country\_iso}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{7}
+  \item \spxentry{country\_name}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{7}
+  \item \spxentry{create\_record()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+
+  \indexspace
+  \bigletter D
+  \item \spxentry{decrypt\_archived\_message\_file()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+  \item \spxentry{decrypt\_backup\_file()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+  \item \spxentry{delay\_s}\spxextra{modules.syn\_flood.SynFloodConfig attribute}, \hyperpage{11}
+  \item \spxentry{delay\_s}\spxextra{modules.udp\_flood.UdpFloodConfig attribute}, \hyperpage{11}
+  \item \spxentry{delete\_messages()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+  \item \spxentry{delete\_record()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+  \item \spxentry{detail}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{8}
+  \item \spxentry{download\_messages()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+
+  \indexspace
+  \bigletter E
+  \item \spxentry{expand\_targets()}\spxextra{in module modules.port\_scanner}, \hyperpage{8}
+  \item \spxentry{export\_messages()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+
+  \indexspace
+  \bigletter F
+  \item \spxentry{filename}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+  \item \spxentry{from\_user}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+
+  \indexspace
+  \bigletter G
+  \item \spxentry{generate\_rsa\_keypair()}\spxextra{in module modules.messaging}, \hyperpage{10}
+  \item \spxentry{get\_totp\_setup\_info()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+
+  \indexspace
+  \bigletter H
+  \item \spxentry{handle\_about()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_log\_analysis()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_password\_manager()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_port\_knocking()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_port\_scan()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_reports()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_secure\_messaging()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_syn\_flood()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{handle\_udp\_flood()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{host}\spxextra{modules.port\_knocking.KnockReport attribute}, \hyperpage{9}
+  \item \spxentry{host}\spxextra{modules.port\_scanner.ScanResult attribute}, \hyperpage{8}
+  \item \spxentry{hostname}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{8}
+  \item \spxentry{hybrid\_decrypt\_for\_user()}\spxextra{in module modules.messaging}, 
+		\hyperpage{10}
+  \item \spxentry{hybrid\_encrypt\_for\_participants()}\spxextra{in module modules.messaging}, 
+		\hyperpage{10}
+
+  \indexspace
+  \bigletter I
+  \item \spxentry{ip}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{8}
+  \item \spxentry{is\_open}\spxextra{modules.port\_scanner.ScanResult attribute}, \hyperpage{8}
+
+  \indexspace
+  \bigletter K
+  \item \spxentry{key}\spxextra{main.MenuOption attribute}, \hyperpage{5}
+  \item \spxentry{knock\_ports}\spxextra{modules.port\_knocking.KnockReport attribute}, 
+		\hyperpage{9}
+  \item \spxentry{knock\_then\_test\_ssh()}\spxextra{in module modules.port\_knocking}, 
+		\hyperpage{9}
+  \item \spxentry{KnockReport}\spxextra{class in modules.port\_knocking}, \hyperpage{9}
+
+  \indexspace
+  \bigletter L
+  \item \spxentry{label}\spxextra{main.MenuOption attribute}, \hyperpage{5}
+  \item \spxentry{list\_messages()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+  \item \spxentry{list\_records()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+  \item \spxentry{load\_private\_key\_pem()}\spxextra{in module modules.messaging}, \hyperpage{10}
+  \item \spxentry{load\_public\_key\_pem()}\spxextra{in module modules.messaging}, \hyperpage{11}
+  \item \spxentry{LOCKOUT\_SECONDS}\spxextra{modules.password\_manager.PasswordManager attribute}, 
+		\hyperpage{7}
+  \item \spxentry{LogEvent}\spxextra{class in modules.log\_analysis}, \hyperpage{7}
+
+  \indexspace
+  \bigletter M
+  \item \spxentry{main}
+    \subitem \spxentry{module}, \hyperpage{5}
+  \item \spxentry{main()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{main\_menu()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{MAX\_2FA\_ATTEMPTS}\spxextra{modules.password\_manager.PasswordManager attribute}, 
+		\hyperpage{7}
+  \item \spxentry{max\_packets}\spxextra{modules.syn\_flood.SynFloodConfig attribute}, 
+		\hyperpage{11}
+  \item \spxentry{max\_packets}\spxextra{modules.udp\_flood.UdpFloodConfig attribute}, 
+		\hyperpage{11}
+  \item \spxentry{MenuOption}\spxextra{class in main}, \hyperpage{5}
+  \item \spxentry{MessagingClient}\spxextra{class in modules.messaging}, \hyperpage{9}
+  \item \spxentry{MessagingServer}\spxextra{class in modules.messaging}, \hyperpage{10}
+  \item \spxentry{module}
+    \subitem \spxentry{main}, \hyperpage{5}
+    \subitem \spxentry{modules.log\_analysis}, \hyperpage{7}
+    \subitem \spxentry{modules.messaging}, \hyperpage{9}
+    \subitem \spxentry{modules.password\_manager}, \hyperpage{7}
+    \subitem \spxentry{modules.port\_knocking}, \hyperpage{9}
+    \subitem \spxentry{modules.port\_scanner}, \hyperpage{8}
+    \subitem \spxentry{modules.syn\_flood}, \hyperpage{11}
+    \subitem \spxentry{modules.udp\_flood}, \hyperpage{11}
+  \item \spxentry{modules.log\_analysis}
+    \subitem \spxentry{module}, \hyperpage{7}
+  \item \spxentry{modules.messaging}
+    \subitem \spxentry{module}, \hyperpage{9}
+  \item \spxentry{modules.password\_manager}
+    \subitem \spxentry{module}, \hyperpage{7}
+  \item \spxentry{modules.port\_knocking}
+    \subitem \spxentry{module}, \hyperpage{9}
+  \item \spxentry{modules.port\_scanner}
+    \subitem \spxentry{module}, \hyperpage{8}
+  \item \spxentry{modules.syn\_flood}
+    \subitem \spxentry{module}, \hyperpage{11}
+  \item \spxentry{modules.udp\_flood}
+    \subitem \spxentry{module}, \hyperpage{11}
+  \item \spxentry{msgId}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+
+  \indexspace
+  \bigletter P
+  \item \spxentry{packet\_size}\spxextra{modules.udp\_flood.UdpFloodConfig attribute}, 
+		\hyperpage{11}
+  \item \spxentry{parse\_auth\_log\_ssh()}\spxextra{in module modules.log\_analysis}, \hyperpage{8}
+  \item \spxentry{parse\_ports()}\spxextra{in module modules.port\_scanner}, \hyperpage{9}
+  \item \spxentry{parse\_ufw\_log()}\spxextra{in module modules.log\_analysis}, \hyperpage{8}
+  \item \spxentry{PasswordManager}\spxextra{class in modules.password\_manager}, \hyperpage{7}
+  \item \spxentry{PasswordManagerError}, \hyperpage{7}
+  \item \spxentry{pause()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{per\_port\_result}\spxextra{modules.port\_knocking.KnockReport attribute}, 
+		\hyperpage{9}
+  \item \spxentry{port}\spxextra{modules.port\_scanner.ScanResult attribute}, \hyperpage{8}
+  \item \spxentry{print\_menu()}\spxextra{in module main}, \hyperpage{5}
+
+  \indexspace
+  \bigletter R
+  \item \spxentry{read\_choice()}\spxextra{in module main}, \hyperpage{5}
+  \item \spxentry{register()}\spxextra{modules.messaging.MessagingClient method}, \hyperpage{10}
+  \item \spxentry{resolve\_ip()}\spxextra{in module modules.port\_scanner}, \hyperpage{9}
+  \item \spxentry{rsa\_oaep\_decrypt()}\spxextra{in module modules.messaging}, \hyperpage{11}
+  \item \spxentry{rsa\_oaep\_encrypt()}\spxextra{in module modules.messaging}, \hyperpage{11}
+
+  \indexspace
+  \bigletter S
+  \item \spxentry{ScanResult}\spxextra{class in modules.port\_scanner}, \hyperpage{8}
+  \item \spxentry{send\_knocks()}\spxextra{in module modules.port\_knocking}, \hyperpage{9}
+  \item \spxentry{send\_message()}\spxextra{modules.messaging.MessagingClient method}, 
+		\hyperpage{10}
+  \item \spxentry{service}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{8}
+  \item \spxentry{service}\spxextra{modules.port\_scanner.ScanResult attribute}, \hyperpage{8}
+  \item \spxentry{size}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+  \item \spxentry{split\_syslog\_line()}\spxextra{in module modules.log\_analysis}, \hyperpage{8}
+  \item \spxentry{ssh\_open}\spxextra{modules.port\_knocking.KnockReport attribute}, \hyperpage{9}
+  \item \spxentry{ssh\_port}\spxextra{modules.port\_knocking.KnockReport attribute}, \hyperpage{9}
+  \item \spxentry{start()}\spxextra{modules.messaging.MessagingServer method}, \hyperpage{10}
+  \item \spxentry{stop()}\spxextra{modules.messaging.MessagingServer method}, \hyperpage{10}
+  \item \spxentry{StoredMeta}\spxextra{class in modules.messaging}, \hyperpage{10}
+  \item \spxentry{summarize()}\spxextra{in module modules.log\_analysis}, \hyperpage{8}
+  \item \spxentry{Summary}\spxextra{class in modules.log\_analysis}, \hyperpage{8}
+  \item \spxentry{syn\_flood\_simulation()}\spxextra{in module modules.syn\_flood}, \hyperpage{11}
+  \item \spxentry{SynFloodConfig}\spxextra{class in modules.syn\_flood}, \hyperpage{11}
+
+  \indexspace
+  \bigletter T
+  \item \spxentry{target\_ip}\spxextra{modules.syn\_flood.SynFloodConfig attribute}, \hyperpage{11}
+  \item \spxentry{target\_ip}\spxextra{modules.udp\_flood.UdpFloodConfig attribute}, \hyperpage{11}
+  \item \spxentry{target\_port}\spxextra{modules.syn\_flood.SynFloodConfig attribute}, 
+		\hyperpage{11}
+  \item \spxentry{target\_port}\spxextra{modules.udp\_flood.UdpFloodConfig attribute}, 
+		\hyperpage{11}
+  \item \spxentry{tcp\_scan\_simple()}\spxextra{in module modules.port\_scanner}, \hyperpage{9}
+  \item \spxentry{tcp\_scan\_threaded()}\spxextra{in module modules.port\_scanner}, \hyperpage{9}
+  \item \spxentry{timestamp}\spxextra{modules.log\_analysis.LogEvent attribute}, \hyperpage{8}
+  \item \spxentry{timestamp}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+  \item \spxentry{to\_user}\spxextra{modules.messaging.StoredMeta attribute}, \hyperpage{10}
+  \item \spxentry{total\_events}\spxextra{modules.log\_analysis.Summary attribute}, \hyperpage{8}
+
+  \indexspace
+  \bigletter U
+  \item \spxentry{udp\_flood\_simulation()}\spxextra{in module modules.udp\_flood}, \hyperpage{11}
+  \item \spxentry{UdpFloodConfig}\spxextra{class in modules.udp\_flood}, \hyperpage{11}
+  \item \spxentry{update\_record()}\spxextra{modules.password\_manager.PasswordManager method}, 
+		\hyperpage{7}
+
+  \indexspace
+  \bigletter V
+  \item \spxentry{validate\_host()}\spxextra{in module modules.port\_scanner}, \hyperpage{9}
+
+\end{sphinxtheindex}
